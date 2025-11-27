@@ -1,0 +1,46 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define d 256
+
+void rabinKarp(string pat, string txt, int q) {
+    int M = pat.length();
+    int N = txt.length();
+    int i, j;
+    int p = 0; // hash for pattern
+    int t = 0; // hash for text
+    int h = 1;
+
+    for (i = 0; i < M - 1; i++)
+        h = (h * d) % q;
+
+    for (i = 0; i < M; i++) {
+        p = (d * p + pat[i]) % q;
+        t = (d * t + txt[i]) % q;
+    }
+
+    for (i = 0; i <= N - M; i++) {
+        if (p == t) {
+            bool match = true;
+            for (j = 0; j < M; j++) {
+                if (txt[i + j] != pat[j]) {
+                    match = false;
+                    break;
+                }
+            }
+            if (match) cout << "Pattern found at index " << i << endl;
+        }
+        if (i < N - M) {
+            t = (d * (t - txt[i] * h) + txt[i + 1 + M - 1]) % q;
+            if (t < 0) t += q;
+        }
+    }
+}
+
+int main() {
+    string txt = "GEEKS FOR GEEKS";
+    string pat = "GEEK";
+    int q = 101;
+    rabinKarp(pat, txt, q);
+    return 0;
+}
